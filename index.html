@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATHPHYSICS PRO QUIZ</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    padding:15px;
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#07152e,#21103e,#101c3b);
+    color:white;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+}
+
+header{
+    text-align:center;
+    padding:25px 10px;
+    background:linear-gradient(120deg,#182d59,#6735a0);
+    border-radius:18px;
+    margin-bottom:20px;
+    border:1px solid #b69aff;
+}
+
+header h1{
+    color:#e1d1ff;
+    margin:0;
+}
+
+header p{
+    color:#eee2ff;
+}
+
+.box{
+    background:#101f40;
+    border:1px solid #7657ba;
+    border-radius:15px;
+    padding:18px;
+    margin-bottom:18px;
+}
+
+h2{
+    color:#d4bdff;
+    text-align:center;
+}
+
+label{
+    display:block;
+    margin-top:12px;
+    color:#e4d5ff;
+}
+
+select{
+    width:100%;
+    padding:13px;
+    margin:7px 0;
+    border-radius:9px;
+    border:1px solid #a98aff;
+    background:#251b49;
+    color:white;
+    font-size:15px;
+}
+
+button{
+    padding:13px;
+    border:0;
+    border-radius:9px;
+    font-weight:bold;
+    font-size:14px;
+    cursor:pointer;
+}
+
+button:disabled{
+    opacity:.4;
+    cursor:not-allowed;
+}
+
+.start{
+    width:100%;
+    background:#9865f5;
+    color:white;
+    margin-top:15px;
+}
+
+.question{
+    background:#192c50;
+    border:1px solid #7657ba;
+    padding:15px;
+    border-radius:12px;
+    margin:15px 0;
+}
+
+.question h3{
+    font-size:16px;
+    color:#f1eaff;
+    line-height:1.6;
+}
+
+.option{
+    display:block;
+    background:#293d68;
+    padding:12px;
+    margin:8px 0;
+    border-radius:8px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.option:hover{
+    background:#503b80;
+}
+
+.option input{
+    margin-right:8px;
+}
+
+.option.correct{
+    background:#176b48;
+    border:1px solid #70ffad;
+}
+
+.option.wrong{
+    background:#783b4a;
+    border:1px solid #ff9292;
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:20px;
+}
+
+.actions button{
+    flex:1;
+    min-width:110px;
+    color:white;
+}
+
+.submit{
+    background:#8954e9;
+}
+
+.answers{
+    background:#276c9e;
+}
+
+.scorebtn{
+    background:#23845d;
+}
+
+.retake{
+    background:#62419a;
+}
+
+#result{
+    display:none;
+    margin-top:20px;
+    padding:18px;
+    background:#26385e;
+    border-radius:12px;
+    text-align:center;
+    line-height:1.8;
+}
+
+.correctText{
+    color:#70ffad;
+    font-weight:bold;
+}
+
+.wrongText{
+    color:#ff9292;
+    font-weight:bold;
+}
+
+.feedback{
+    margin-top:10px;
+    padding:10px;
+    background:#101d38;
+    border-radius:8px;
+    line-height:1.6;
+}
+
+#quiz{
+    margin-top:15px;
+}
+
+footer{
+    text-align:center;
+    padding:20px;
+    color:#c7b8ef;
+}
+
+@media(max-width:500px){
+    header h1{
+        font-size:22px;
+    }
+
+    .question h3{
+        font-size:15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+<h1>∑ MATHPHYSICS PRO</h1>
+<p>Advanced Mathematical Physics Quiz</p>
+<p>M.Sc PHYSICS | EXAM PRACTICE</p>
+</header>
+
+<div class="box">
+
+<h2>SELECT YOUR QUIZ</h2>
+
+<label>Select Unit</label>
+
+<select id="unitSelect" onchange="updateParts()">
+<option value="">-- Select Unit --</option>
+<option value="0">UNIT I - VECTOR</option>
+<option value="1">UNIT II - MATRICES</option>
+<option value="2">UNIT III - FOURIER SERIES</option>
+<option value="3">UNIT IV - SPECIAL FUNCTIONS</option>
+<option value="4">UNIT V - PARTIAL DIFFERENTIAL EQUATIONS</option>
+</select>
+
+<label>Select Part</label>
+
+<select id="partSelect">
+<option value="">-- Select Part --</option>
+</select>
+
+<button class="start" onclick="startQuiz()">START QUIZ</button>
+
+</div>
+
+<div class="box">
+
+<h2 id="quizTitle">WELCOME TO QUIZ</h2>
+
+<div id="quiz">
+<p style="text-align:center;color:#c7b8ef">
+Select a Unit and Part to begin.
+</p>
+</div>
+
+<div class="actions">
+
+<button class="submit" onclick="submitQuiz()">SUBMIT</button>
+
+<button class="answers" onclick="viewAnswers()">VIEW ANSWERS</button>
+
+<button class="scorebtn" onclick="viewScore()">VIEW SCORE</button>
+
+<button class="retake" onclick="retakeQuiz()">RETAKE</button>
+
+</div>
+
+<div id="result"></div>
+
+</div>
+
+<footer>
+MATHPHYSICS PRO | LEARN • PRACTICE • IMPROVE
+</footer>
+
+</div>
+
+<script>
+
+/* QUESTION FORMAT:
+[q, [option A, option B, option C, option D], correct index]
+A=0, B=1, C=2, D=3
+*/
+
+const Q = (q,a,b,c,d,ans) => [q,[a,b,c,d],ans];
+
+const data = [
+
+/* ==================================
+UNIT 1 - VECTOR
+================================== */
+
+[
+
+/* PART 1 */
+
+[
+Q("The gradient of a scalar field is a:","Scalar","Vector","Matrix","Tensor",1),
+Q("The divergence of a vector field is a:","Vector","Scalar","Matrix","Constant",1),
+Q("The curl of a vector field is a:","Scalar","Vector","Constant","Matrix",1),
+Q("Which theorem converts surface integral into volume integral?","Stokes theorem","Green theorem","Gauss theorem","Taylor theorem",2),
+Q("Which theorem relates line integral to surface integral?","Stokes theorem","Gauss theorem","Fourier theorem","Cayley theorem",0),
+Q("Two vectors are orthogonal when their dot product is:","One","Zero","Infinity","Minus one",1),
+Q("The divergence operator is represented by:","∇ × A","∇ · A","∇²A","A × B",1),
+Q("The curl operator is represented by:","∇ × A","∇ · A","∇²A","A · B",0),
+Q("Which coordinate system uses (x,y,z)?","Spherical","Cylindrical","Cartesian","Polar",2),
+Q("A scalar field assigns a:","Vector to each point","Scalar to each point","Matrix to each point","Tensor only",1)
+],
+
+/* PART 2 */
+
+[
+Q("The gradient of a constant scalar field is:","One","Zero vector","Infinity","Constant vector",1),
+Q("The divergence of a solenoidal vector field is:","One","Zero","Infinity","Negative",1),
+Q("A vector field with zero curl is called:","Solenoidal","Irrotational","Rotational","Uniform",1),
+Q("A vector field with zero divergence is called:","Solenoidal","Irrotational","Conservative","Uniform",0),
+Q("A line integral is evaluated along a:","Curve","Volume","Surface","Point",0),
+Q("A surface integral is evaluated over a:","Curve","Surface","Point","Line",1),
+Q("A volume integral is evaluated throughout a:","Curve","Surface","Three-dimensional region","Point",2),
+Q("Green's theorem is generally applied in:","A plane","A sphere only","A matrix","A straight line",0),
+Q("The symbol ∇ is called:","Delta","Nabla","Sigma","Omega",1),
+Q("The gradient points in the direction of:","Maximum increase","Minimum value","Zero change","Negative time",0)
+],
+
+/* PART 3 */
+
+[
+Q("In cylindrical coordinates, the coordinates are:","(r,θ,z)","(r,θ,φ)","(x,y,z)","(ρ,φ,θ)",0),
+Q("In spherical coordinates, the radial coordinate is:","x","y","r","z",2),
+Q("The divergence in Cartesian coordinates is:","∂Ax/∂x + ∂Ay/∂y + ∂Az/∂z","Ax+Ay+Az","∇×A","A·A",0),
+Q("The Laplacian of a scalar field is:","∇φ","∇×φ","∇²φ","∇·φ",2),
+Q("The curl of a gradient is:","One","Zero","Infinity","Constant",1),
+Q("The divergence of a curl is:","Zero","One","Infinity","Negative one",0),
+Q("A conservative vector field has:","Zero curl in a simply connected region","Zero gradient","Infinite divergence","No components",0),
+Q("The radial unit vector is denoted by:","i","j","k","r̂",3),
+Q("The dot product of perpendicular vectors is:","AB","A+B","Zero","One",2),
+Q("The cross product of parallel vectors is:","Zero vector","Unit vector","Scalar one","Infinity",0)
+],
+
+/* PART 4 */
+
+[
+Q("Linear independence means:","Nontrivial combination gives zero","Only trivial combination gives zero","All vectors are equal","All vectors are zero",1),
+Q("A linear combination of vectors uses:","Scalar coefficients","Only matrices","Only derivatives","Only integrals",0),
+Q("The dimension of a vector space is the number of vectors in a:","Basis","Subset","Zero vector","Matrix",0),
+Q("A basis must be:","Dependent","Independent and spanning","Only orthogonal","Only equal",1),
+Q("The zero vector belongs to:","No vector space","Every vector space","Only R²","Only R³",1),
+Q("The magnitude of vector A is represented by:","A·A","|A|","∇A","A×A",1),
+Q("The dot product is also known as:","Scalar product","Vector product","Tensor product","Matrix product",0),
+Q("The cross product produces a:","Scalar","Vector","Matrix","Number only",1),
+Q("The cross product of A with itself is:","A","1","Zero vector","2A",2),
+Q("Which theorem is associated with circulation and curl?","Stokes theorem","Gauss theorem","Cayley theorem","Parseval theorem",0)
+],
+
+/* PART 5 */
+
+[
+Q("Orthogonal coordinate surfaces meet at:","Acute angles","Right angles","Straight lines","No angles",1),
+Q("Cartesian unit vectors are:","i, j, k","r, θ, φ","ρ, φ, z","x, y, z",0),
+Q("Divergence measures:","Local source strength","Vector length","Angle","Surface area",0),
+Q("Curl measures:","Local rotation","Vector magnitude","Volume","Mass",0),
+Q("The gradient of f is perpendicular to:","Level surfaces","All vectors","Time axis","Origin only",0),
+Q("The integral along a curve is called:","Line integral","Volume integral","Surface area","Trace",0),
+Q("Gauss theorem relates flux to:","Volume integral of divergence","Line integral of gradient","Curl of scalar","Matrix trace",0),
+Q("The normal vector to a surface is:","Tangent","Perpendicular","Zero","Parallel to every curve",1),
+Q("Divergence theorem requires a:","Closed surface","Open curve","Single point","Matrix",0),
+Q("Circulation is calculated using:","Line integral","Volume integral","Trace","Determinant",0)
+]
+
+],
+
+/* ==================================
+UNIT 2 - MATRICES
+================================== */
+
+[
+
+/* PART 1 */
+
+[
+Q("The transpose of a matrix is obtained by:","Changing signs","Interchanging rows and columns","Adding rows","Multiplying columns",1),
+Q("A Hermitian matrix satisfies:","A†=A","A†=-A","A²=0","Aᵀ=0",0),
+Q("A skew-Hermitian matrix satisfies:","A†=A","A†=-A","Aᵀ=A","A=I",1),
+Q("The trace of a square matrix is:","Sum of diagonal elements","Product of elements","Determinant","Sum of rows",0),
+Q("Eigenvalues are found using:","det(A-λI)=0","A+I=0","A²=0","det(A)=1",0),
+Q("An orthogonal matrix satisfies:","AᵀA=I","Aᵀ=-A","A²=0","A=0",0),
+Q("A unitary matrix satisfies:","A†A=I","A†=-A","A²=0","A=0",0),
+Q("Cayley-Hamilton theorem states that a matrix satisfies its:","Characteristic equation","Trace equation","Transpose equation","Inverse equation",0),
+Q("Pauli matrices are used in:","Quantum mechanics","Thermodynamics","Fluid mechanics","Classical mechanics only",0),
+Q("A diagonal matrix has nonzero entries only on its:","First row","Main diagonal","Last column","Boundary",1)
+],
+
+/* PART 2 */
+
+[
+Q("A square matrix has:","Equal rows and columns","More rows","More columns","No diagonal",0),
+Q("A zero matrix contains:","Only ones","Only zeros","Negative values","Diagonal values",1),
+Q("An identity matrix has diagonal elements equal to:","Zero","One","Two","Minus one",1),
+Q("The determinant of an identity matrix is:","Zero","One","n","Infinity",1),
+Q("The determinant of a triangular matrix is the:","Sum of diagonal entries","Product of diagonal entries","Trace squared","Always zero",1),
+Q("A singular matrix has determinant:","One","Zero","Minus one","Infinity",1),
+Q("A non-singular matrix has:","No inverse","An inverse","Zero trace","Equal rows",1),
+Q("The inverse of AB is:","A⁻¹B⁻¹","B⁻¹A⁻¹","AB","BA",1),
+Q("The transpose of a sum is:","Aᵀ+Bᵀ","AB","A-B","Zero",0),
+Q("The transpose of a product is:","AᵀBᵀ","BᵀAᵀ","AB","Zero",1)
+],
+
+/* PART 3 */
+
+[
+Q("A submatrix is obtained by:","Deleting selected rows and columns","Adding elements","Squaring matrix","Changing signs",0),
+Q("Partitioning a matrix means:","Dividing into blocks","Finding determinant","Taking inverse","Changing trace",0),
+Q("A real symmetric matrix satisfies:","Aᵀ=A","Aᵀ=-A","A²=0","A†=-A",0),
+Q("A skew-symmetric matrix satisfies:","Aᵀ=A","Aᵀ=-A","A=I","A†=A",1),
+Q("Complex conjugation changes the sign of its:","Real part","Imaginary part","Magnitude","Both parts",1),
+Q("A Hermitian matrix has:","Real diagonal elements","Imaginary diagonal only","Zero diagonal","No eigenvalues",0),
+Q("Eigenvectors of distinct eigenvalues of a real symmetric matrix are:","Parallel","Orthogonal","Equal","Zero",1),
+Q("The sum of eigenvalues equals the:","Trace","Determinant","Rank","Inverse",0),
+Q("The product of eigenvalues equals the:","Trace","Determinant","Rank","Dimension",1),
+Q("The characteristic polynomial comes from:","det(A-λI)","A+A","AᵀA","A⁻¹",0)
+],
+
+/* PART 4 */
+
+[
+Q("Diagonalisation transforms a matrix into:","Diagonal form","Zero form","Row form","Scalar form",0),
+Q("A diagonalizable matrix has enough:","Independent eigenvectors","Zero elements","Rows only","Columns only",0),
+Q("The eigenvalue equation is:","Av=λv","A+v=0","A²=v","A=v+λ",0),
+Q("The trace of a 2×2 matrix is:","Sum of diagonal entries","Product of entries","Difference of rows","Determinant",0),
+Q("The determinant of a 2×2 matrix is:","ad+bc","ad-bc","a+b+c+d","ab-cd",1),
+Q("A unitary matrix preserves:","Inner products","Only determinants","Only trace","Diagonal entries",0),
+Q("The inverse of an orthogonal matrix is:","Aᵀ","-A","A²","Zero",0),
+Q("The conjugate transpose is called:","Adjoint","Trace","Rank","Minor",0),
+Q("A matrix with A²=A is:","Idempotent","Nilpotent","Hermitian only","Unitary only",0),
+Q("A matrix with Aⁿ=0 is:","Nilpotent","Identity","Orthogonal","Diagonal only",0)
+],
+
+/* PART 5 */
+
+[
+Q("A Pauli matrix is a:","2×2 matrix","3×3 matrix","Scalar","Vector",0),
+Q("Pauli matrices are:","2×2 complex matrices","3×3 real matrices","4×4 only","Scalars",0),
+Q("Eigenvalues of Pauli matrices are:","+1 and -1","0 and 1","1 and 2","Only zero",0),
+Q("The trace of each Pauli matrix is:","Zero","One","Two","Minus one",0),
+Q("The determinant of each Pauli matrix is:","Zero","One","Minus one","Two",2),
+Q("The commutator of A and B is:","AB-BA","AB+BA","A+B","A-B",0),
+Q("The anticommutator of A and B is:","AB-BA","AB+BA","A/B","A²",1),
+Q("The rank of a matrix is the number of:","Independent rows or columns","Diagonal entries","Zero entries","Eigenvalues only",0),
+Q("The nullity of a matrix is the dimension of its:","Null space","Row space","Column sum","Trace",0),
+Q("A matrix with all eigenvalues zero need not be:","Zero matrix","Square","Singular","Non-invertible",0)
+]
+
+],
+
+/* ==================================
+UNIT 3 - FOURIER SERIES
+================================== */
+
+[
+
+/* PART 1 */
+
+[
+Q("Fourier series represents:","Periodic functions","Only constants","Matrices","Vectors",0),
+Q("An even function satisfies:","f(-x)=f(x)","f(-x)=-f(x)","f(x)=0","f(x)=1",0),
+Q("An odd function satisfies:","f(-x)=f(x)","f(-x)=-f(x)","f(x)=1","f(x)=0",1),
+Q("An even function contains:","Only sine terms","Cosine and constant terms","No terms","Only exponentials",1),
+Q("An odd function contains:","Only cosine terms","Only sine terms","Only constants","No terms",1),
+Q("Dirichlet conditions concern:","Convergence","Matrix inversion","Eigenvalues","Vector spaces",0),
+Q("Parseval identity relates:","Fourier coefficients and energy","Matrices","Gradient and curl","Roots",0),
+Q("Half-range series is defined over:","Half an interval","Infinite interval","A point","Complex plane",0),
+Q("Fourier integrals are useful for:","Non-periodic functions","Constant functions","Matrices","Vectors",0),
+Q("Fourier coefficients are determined by:","Integration","Matrix multiplication","Differentiation only","Trace",0)
+],
+
+/* PART 2 */
+
+[
+Q("The fundamental period of sin x is:","π","2π","4π","π/2",1),
+Q("The period of cos 3x is:","2π","π","2π/3","3π",2),
+Q("The integral of an odd function over [-a,a] is:","Zero","One","Infinity","Positive",0),
+Q("The integral of an even function over [-a,a] is:","Zero","2 times integral from 0 to a","One","Negative",1),
+Q("The Fourier constant term represents:","Average component","Highest frequency","Derivative","Maximum value",0),
+Q("The sine function is:","Even","Odd","Neither","Constant",1),
+Q("The cosine function is:","Even","Odd","Neither","Constant",0),
+Q("The product of two odd functions is:","Odd","Even","Neither","Zero",1),
+Q("The product of even and odd functions is:","Even","Odd","Constant","Zero",1),
+Q("The sum of two even functions is:","Odd","Even","Neither","Zero",1)
+],
+
+/* PART 3 */
+
+[
+Q("The coefficient aₙ multiplies:","cos(nx)","sin(nx)","eˣ","xⁿ",0),
+Q("The coefficient bₙ multiplies:","cos(nx)","sin(nx)","xⁿ","eˣ",1),
+Q("For an odd function, cosine coefficients are:","Zero","One","Infinite","Equal to sine coefficients",0),
+Q("For an even function, sine coefficients are:","Zero","One","Infinite","Negative",0),
+Q("A half-range cosine series uses:","Cosine functions","Sine only","Exponential only","Polynomial only",0),
+Q("A half-range sine series uses:","Cosine only","Sine functions","Matrices","Vectors",1),
+Q("Changing the interval affects:","Fourier coefficient formulas","Matrix rank","Vector dimension","Eigenvalues",0),
+Q("At a jump, Fourier series converges to:","Left limit","Right limit","Average of limits","Zero always",2),
+Q("A continuous periodic function's Fourier series converges to:","Function value","Zero","Infinity","Derivative only",0),
+Q("Angular frequency of sin(ωt) is:","ω","2ω","π","1/ω",0)
+],
+
+/* PART 4 */
+
+[
+Q("Forced vibrations may be analysed using:","Fourier series","Matrix trace","Vector addition","Gamma function",0),
+Q("A periodic function repeats after its:","Period","Amplitude","Derivative","Mean",0),
+Q("Frequency is the reciprocal of:","Period","Amplitude","Wavelength squared","Phase",0),
+Q("Fundamental frequency is the:","Lowest frequency component","Highest component","Zero frequency","Average amplitude",0),
+Q("A Fourier series can contain:","Harmonics","One frequency only","Constants only","Polynomials only",0),
+Q("The nth harmonic has frequency:","n times fundamental frequency","Fundamental divided by n","Zero","One",0),
+Q("The coefficient b₀ is:","Not used in standard form","Constant term","Period","Amplitude",0),
+Q("The integral of sin(nx) from -π to π is:","Zero","2π","π","One",0),
+Q("The integral of cos(nx) from -π to π is zero for:","Nonzero integer n","Every n","Only n=0","No n",0),
+Q("Orthogonality helps calculate:","Fourier coefficients","Matrix inverse","Vector magnitude","Gamma function",0)
+],
+
+/* PART 5 */
+
+[
+Q("Parseval identity expresses:","Mean-square value conservation","Matrix diagonalisation","Vector rotation","Boundary conditions",0),
+Q("The Fourier series of a constant contains:","Constant term only","Sine terms","Cosine harmonics only","No terms",0),
+Q("A sawtooth wave can be represented by:","Fourier series","Matrix","Vector","Gamma function",0),
+Q("Fourier integral extends analysis to:","Non-periodic functions","Periodic functions only","Matrices","Constants",0),
+Q("Fourier transform is related to:","Fourier integral","Matrix trace","Vector gradient","Gamma recurrence",0),
+Q("A symmetric square wave contains:","Odd harmonics","Even harmonics only","No harmonics","Constant only",0),
+Q("The coefficient a₀ represents:","Mean value","Maximum slope","Second derivative","Determinant",0),
+Q("Fourier series is based on:","Orthogonal trigonometric functions","Matrices","Eigenvectors only","Legendre polynomials",0),
+Q("A function with period 2L repeats after:","2L","L/2","L²","π only",0),
+Q("Fourier series is used in:","Vibration analysis","Matrix inversion only","Vector spaces","Factorials",0)
+]
+
+],
+
+/* ==================================
+UNIT 4 - SPECIAL FUNCTIONS
+================================== */
+
+[
+
+/* PART 1 */
+
+[
+Q("Gamma function is an extension of:","Factorial function","Logarithmic function","Trigonometric function","Exponential function",0),
+Q("For positive integer n, Γ(n) equals:","n!","(n-1)!","n+1","1/n",1),
+Q("Γ(1) is equal to:","Zero","One","Two","Infinity",1),
+Q("The beta-gamma relation is:","B(m,n)=Γ(m)Γ(n)/Γ(m+n)","B(m,n)=Γ(m+n)","B(m,n)=Γ(m)-Γ(n)","B(m,n)=Γ(m)+Γ(n)",0),
+Q("Legendre polynomials solve:","Legendre equation","Heat equation","Wave equation","Laplace transform",0),
+Q("The first Legendre polynomial P₀(x) is:","x","1","x²","0",1),
+Q("The second Legendre polynomial P₁(x) is:","1","x","3x²","x²",1),
+Q("The polynomial P₂(x) is:","(3x²-1)/2","x²+1","3x","1-x",0),
+Q("Legendre polynomials are orthogonal on:","[-1,1]","[0,∞]","[1,∞]","[0,1]",0),
+Q("Gamma function is defined using:","Improper integral","Matrix product","Vector sum","Fourier series",0)
+],
+
+/* PART 2 */
+
+[
+Q("The recurrence formula for Gamma function is:","Γ(z+1)=zΓ(z)","Γ(z+1)=Γ(z)","Γ(z)=z+1","Γ(z)=1",0),
+Q("Γ(2) equals:","0","1","2","3",1),
+Q("Γ(3) equals:","1","2","3","6",1),
+Q("Γ(4) equals:","2","3","6","24",2),
+Q("Γ(5) equals:","4","12","24","120",2),
+Q("The value of Γ(1/2) is:","π","√π","1/π","2π",1),
+Q("Beta function is also called:","Euler integral of first kind","Euler integral of second kind","Fourier integral","Laplace integral",0),
+Q("The beta function is symmetric because:","B(m,n)=B(n,m)","B(m,n)=0","B(m,n)=1","B(m,n)=m+n",0),
+Q("The Gamma function is defined for:","Positive real arguments and extended complex arguments","Only integers","Only zero","Only negative integers",0),
+Q("The factorial of zero is:","Zero","One","Minus one","Infinity",1)
+],
+
+/* PART 3 */
+
+[
+Q("The Legendre differential equation is:","(1-x²)y''-2xy'+n(n+1)y=0","y''+y=0","xy'+y=0","y''-xy=0",0),
+Q("P₀(x) is:","0","1","x","x²",1),
+Q("P₁(x) is:","x","1","x²","2x",0),
+Q("P₂(0) equals:","1","-1/2","0","1/2",1),
+Q("Legendre polynomials have:","Orthogonality property","No roots","Only complex values","No recurrence",0),
+Q("Rodrigues formula is used to generate:","Legendre polynomials","Fourier coefficients","Matrices","Gamma values",0),
+Q("The parity of Pₙ(-x) is:","(-1)ⁿPₙ(x)","Pₙ(x)+1","Zero","Pₙ(x)²",0),
+Q("Legendre polynomials are indexed by:","n","x only","Time","Frequency",0),
+Q("The value of Pₙ(1) is:","0","1","n","-1",1),
+Q("The value of Pₙ(-1) is:","1","(-1)ⁿ","0","n²",1)
+],
+
+/* PART 4 */
+
+[
+Q("Bessel functions commonly arise in:","Cylindrical symmetry problems","Matrix inversion","Vector addition","Fourier coefficients only",0),
+Q("The Bessel differential equation contains:","1/x term","Only constants","No derivatives","Only exponential terms",0),
+Q("J₀(x) is a Bessel function of:","First kind, order zero","Second kind, order one","Third kind","Order infinity",0),
+Q("Jₙ(x) denotes Bessel function of:","First kind","Second kind","Third kind","Fourth kind",0),
+Q("Yₙ(x) denotes Bessel function of:","First kind","Second kind","Legendre kind","Gamma kind",1),
+Q("The order of a Bessel function is usually:","n","x","t","π",0),
+Q("Bessel functions are solutions of:","Bessel differential equation","Legendre equation only","Heat equation only","Matrix equation",0),
+Q("Bessel functions are useful in:","Wave propagation in cylindrical systems","Matrix trace","Scalar multiplication","Probability only",0),
+Q("The Bessel function J₀(0) is:","Zero","One","Infinity","Minus one",1),
+Q("Bessel functions have:","Oscillatory behaviour","Only constant values","No zeros","Only linear terms",0)
+],
+
+/* PART 5 */
+
+[
+Q("Hermite polynomials are used in:","Quantum mechanics","Matrix inversion","Vector algebra only","Fluid statics only",0),
+Q("Hermite polynomials satisfy:","Hermite differential equation","Bessel equation","Laplace equation only","Wave equation only",0),
+Q("H₀(x) is:","0","1","x","x²",1),
+Q("H₁(x) is:","2x","x²","1","3x",0),
+Q("H₂(x) is:","4x²-2","x²+1","2x","1",0),
+Q("Laguerre polynomials are solutions of:","Laguerre equation","Bessel equation","Wave equation","Fourier equation",0),
+Q("L₀(x) is:","1","x","0","x²",0),
+Q("Chebyshev polynomials are important in:","Approximation theory","Matrix trace","Vector product","Fluid flow only",0),
+Q("Special functions commonly solve:","Differential equations","Only algebraic equations","Only matrix equations","Only inequalities",0),
+Q("Orthogonal polynomials are defined with respect to a:","Weight function","Matrix determinant","Vector magnitude","Constant time",0)
+]
+
+],
+
+/* ==================================
+UNIT 5 - PARTIAL DIFFERENTIAL EQUATIONS
+================================== */
+
+[
+
+/* PART 1 */
+
+[
+Q("A partial differential equation contains:","Partial derivatives","Only ordinary derivatives","Only constants","Only matrices",0),
+Q("The order of a PDE is determined by:","Highest order derivative","Lowest derivative","Number of variables","Constant term",0),
+Q("The degree of a PDE is the power of:","Highest order derivative after removing radicals and fractions","Independent variable","Constant","Function",0),
+Q("The heat equation is generally:","Parabolic","Elliptic","Hyperbolic","Linear algebraic",0),
+Q("The wave equation is generally:","Elliptic","Parabolic","Hyperbolic","Algebraic",2),
+Q("Laplace equation is:","Elliptic","Hyperbolic","Parabolic","Non-differential",0),
+Q("The standard heat equation is:","uₜ=α²uₓₓ","uₜₜ=c²uₓₓ","∇²u=0","uₓ=0",0),
+Q("The standard wave equation is:","uₜ=αuₓ","uₜₜ=c²uₓₓ","∇²u=0","u=constant",1),
+Q("Laplace equation in two dimensions is:","uₓₓ+uᵧᵧ=0","uₓ+uᵧ=0","uₜ=uₓ","uₓₓ-uᵧᵧ=1",0),
+Q("A solution of a PDE is a function satisfying:","The given differential equation","Only initial conditions","Only algebraic identity","Only boundary values",0)
+],
+
+/* PART 2 */
+
+[
+Q("A PDE involving only first derivatives is of order:","Zero","First","Second","Third",1),
+Q("The equation uₓ+uᵧ=0 is:","First order PDE","Second order PDE","Third order PDE","ODE",0),
+Q("The equation uₓₓ+uᵧᵧ=0 is of order:","First","Second","Third","Fourth",1),
+Q("The independent variables in u(x,y) are:","x and y","u only","x only","y only",0),
+Q("The dependent variable in u(x,y) is:","x","y","u","None",2),
+Q("A linear PDE has the dependent variable and its derivatives appearing:","Linearly","Quadratically","Exponentially","As products only",0),
+Q("A homogeneous linear PDE has:","Zero right-hand side","One right-hand side","Infinite terms","No derivatives",0),
+Q("The method of separation of variables assumes a solution in:","Product form","Sum of matrices","Constant form only","Polynomial form only",0),
+Q("Boundary conditions specify values at:","Boundaries of the domain","Only the origin","Infinite time only","All interior points",0),
+Q("Initial conditions specify values at:","Initial time","Boundary only","Infinity","Every spatial point only",0)
+],
+
+/* PART 3 */
+
+[
+Q("The heat equation describes:","Heat diffusion","Pure rotation","Matrix inversion","Electromagnetic charge only",0),
+Q("The wave equation describes:","Wave propagation","Static temperature only","Matrix diagonalisation","Vector addition",0),
+Q("Laplace equation describes:","Steady-state fields","Only time-dependent waves","Only heat flow in time","Matrix multiplication",0),
+Q("The heat equation is second order in:","Space","Time","Both equally","Neither",0),
+Q("The wave equation is second order in:","Time and space","Space only","Time only","Neither",0),
+Q("The Laplace equation has:","No explicit time derivative","Only time derivative","Only first derivative","No spatial derivative",0),
+Q("The diffusion coefficient in heat equation is:","Thermal diffusivity","Wave speed","Mass density only","Frequency",0),
+Q("The wave speed is represented by:","c","α","λ","μ",0),
+Q("A parabolic PDE has a discriminant:","Zero","Positive","Negative","Infinite",0),
+Q("An elliptic PDE has a discriminant:","Positive","Zero","Negative","Infinite",2)
+],
+
+/* PART 4 */
+
+[
+Q("A hyperbolic PDE has discriminant:","Negative","Zero","Positive","Always one",2),
+Q("The general second-order PDE is written as:","Auₓₓ+2Buₓᵧ+Cuᵧᵧ+...=0","uₓ+uᵧ=0","uₜ=0","u=constant",0),
+Q("The classification discriminant is:","B²-AC","A+B+C","AC-B","A²+C²",0),
+Q("If B²-AC is positive, the PDE is:","Elliptic","Parabolic","Hyperbolic","Linear algebraic",2),
+Q("If B²-AC is zero, the PDE is:","Hyperbolic","Parabolic","Elliptic","Nonlinear",1),
+Q("If B²-AC is negative, the PDE is:","Hyperbolic","Parabolic","Elliptic","Algebraic",2),
+Q("Separation constants arise when:","Variables are separated","Matrices are added","Vectors are multiplied","Integrals vanish",0),
+Q("A boundary value problem specifies:","Conditions on boundaries","Only initial values","Only derivatives at infinity","No conditions",0),
+Q("A well-posed problem has:","Existence, uniqueness and stability","Only existence","Only uniqueness","No solution",0),
+Q("The superposition principle applies to:","Linear homogeneous equations","All nonlinear equations","Only algebraic equations","Only matrices",0)
+],
+
+/* PART 5 */
+
+[
+Q("Fourier series is useful in solving:","Heat equation","Only algebraic equations","Only matrix equations","Only inequalities",0),
+Q("The separation method converts a PDE into:","Ordinary differential equations","Matrix equations only","Algebraic inequalities","Vector identities",0),
+Q("A fixed-end vibrating string has boundary displacement:","Zero at both ends","Infinite at both ends","Constant one","No restrictions",0),
+Q("The one-dimensional wave equation contains:","Second spatial and time derivatives","Only first derivatives","Only integrals","Only constants",0),
+Q("The Laplace operator in Cartesian coordinates is:","∂²/∂x²+∂²/∂y²+∂²/∂z²","∂/∂x+∂/∂y","∇×A","∇·A only",0),
+Q("The solution of Laplace equation is called:","Harmonic function","Periodic function only","Eigenvector","Polynomial only",0),
+Q("A boundary condition of Dirichlet type specifies:","Function value","Normal derivative","Second derivative only","Frequency",0),
+Q("A Neumann boundary condition specifies:","Normal derivative","Function value only","Time period","Mass",0),
+Q("An eigenvalue problem contains:","Eigenvalues and eigenfunctions","Only constants","Only vectors","Only determinants",0),
+Q("The heat equation generally smooths:","Temperature distribution","Matrix entries","Vector angles","Eigenvalues",0)
+]
+
+]
+
+];
+
+/* ==================================
+QUIZ FUNCTIONS
+================================== */
+
+let currentQuestions=[];
+let submitted=false;
+let currentScore=0;
+let currentUnit=-1;
+let currentPart=-1;
+
+function updateParts(){
+
+    const unit=document.getElementById("unitSelect").value;
+    const part=document.getElementById("partSelect");
+
+    part.innerHTML='<option value="">-- Select Part --</option>';
+
+    if(unit==="") return;
+
+    for(let i=0;i<5;i++){
+
+        const option=document.createElement("option");
+
+        option.value=i;
+        option.textContent="PART "+(i+1)+" - 10 QUESTIONS";
+
+        part.appendChild(option);
+    }
+}
+
+function startQuiz(){
+
+    const unit=document.getElementById("unitSelect").value;
+    const part=document.getElementById("partSelect").value;
+
+    if(unit==="" || part===""){
+        alert("Please select Unit and Part!");
+        return;
+    }
+
+    currentUnit=Number(unit);
+    currentPart=Number(part);
+
+    currentQuestions=data[currentUnit][currentPart];
+
+    if(!currentQuestions || currentQuestions.length!==10){
+        alert("Question loading error!");
+        return;
+    }
+
+    submitted=false;
+    currentScore=0;
+
+    document.getElementById("result").style.display="none";
+
+    document.getElementById("quizTitle").textContent=
+    "UNIT "+(currentUnit+1)+" - PART "+(currentPart+1);
+
+    let html="";
+
+    currentQuestions.forEach((q,index)=>{
+
+        html+=`
+        <div class="question" id="question${index}">
+
+        <h3>${index+1}. ${q[0]}</h3>
+
+        <div id="options${index}">
+        `;
+
+        q[1].forEach((option,optIndex)=>{
+
+            html+=`
+            <label class="option" id="option${index}_${optIndex}">
+
+            <input type="radio"
+            name="question${index}"
+            value="${optIndex}">
+
+            ${String.fromCharCode(65+optIndex)}. ${option}
+
+            </label>
+            `;
+
+        });
+
+        html+=`
+        </div>
+        <div id="feedback${index}"></div>
+        </div>
+        `;
+
+    });
+
+    document.getElementById("quiz").innerHTML=html;
+
+    document.getElementById("quiz").scrollIntoView({
+        behavior:"smooth"
+    });
+}
+
+function submitQuiz(){
+
+    if(currentQuestions.length===0){
+        alert("Please start a quiz first!");
+        return;
+    }
+
+    if(submitted){
+        alert("Already submitted! Click RETAKE to try again.");
+        return;
+    }
+
+    currentScore=0;
+
+    currentQuestions.forEach((q,index)=>{
+
+        const selected=document.querySelector(
+        `input[name="question${index}"]:checked`
+        );
+
+        if(selected && Number(selected.value)===q[2]){
+            currentScore++;
+        }
+
+    });
+
+    submitted=true;
+
+    showResult();
+
+    document.getElementById("result").scrollIntoView({
+        behavior:"smooth"
+    });
+}
+
+function showResult(){
+
+    const percentage=(currentScore/10)*100;
+
+    document.getElementById("result").style.display="block";
+
+    document.getElementById("result").innerHTML=`
+
+    <h2>QUIZ RESULT</h2>
+
+    <h1 class="correctText">${currentScore} / 10</h1>
+
+    <h3>Percentage: ${percentage}%</h3>
+
+    <p>Correct Answers: ${currentScore}</p>
+
+    <p>Wrong Answers: ${10-currentScore}</p>
+
+    <h3>${percentage>=80?"EXCELLENT!":percentage>=50?"GOOD JOB!":"KEEP PRACTICING!"}</h3>
+
+    `;
+}
+
+function viewAnswers(){
+
+    if(currentQuestions.length===0){
+        alert("Please start a quiz first!");
+        return;
+    }
+
+    if(!submitted){
+        alert("Please SUBMIT your quiz first!");
+        return;
+    }
+
+    currentQuestions.forEach((q,index)=>{
+
+        const selected=document.querySelector(
+        `input[name="question${index}"]:checked`
+        );
+
+        const correct=q[2];
+
+        q[1].forEach((option,optIndex)=>{
+
+            const label=document.getElementById(
+            `option${index}_${optIndex}`
+            );
+
+            label.classList.remove("correct","wrong");
+
+            if(optIndex===correct){
+                label.classList.add("correct");
+            }
+
+            if(selected &&
+            Number(selected.value)===optIndex &&
+            optIndex!==correct){
+
+                label.classList.add("wrong");
+            }
+
+        });
+
+        const feedback=document.getElementById(
+        "feedback"+index
+        );
+
+        feedback.innerHTML=`
+
+        <div class="feedback">
+
+        <span class="correctText">
+        Correct Answer: ${String.fromCharCode(65+correct)}.
+        ${q[1][correct]}
+        </span>
+
+        <br>
+
+        <span class="${selected &&
+        Number(selected.value)===correct ?
+        "correctText":"wrongText"}">
+
+        Your Answer:
+        ${selected ?
+        String.fromCharCode(65+Number(selected.value))+". "+q[1][Number(selected.value)]
+        :"Not Answered"}
+
+        </span>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+function viewScore(){
+
+    if(currentQuestions.length===0){
+        alert("Please start a quiz first!");
+        return;
+    }
+
+    if(!submitted){
+        alert("Please submit your quiz first!");
+        return;
+    }
+
+    showResult();
+
+    document.getElementById("result").scrollIntoView({
+        behavior:"smooth"
+    });
+}
+
+function retakeQuiz(){
+
+    if(currentUnit===-1 || currentPart===-1){
+        alert("Please start a quiz first!");
+        return;
+    }
+
+    startQuiz();
+
+}
+
+</script>
+
+</body>
+</html>
